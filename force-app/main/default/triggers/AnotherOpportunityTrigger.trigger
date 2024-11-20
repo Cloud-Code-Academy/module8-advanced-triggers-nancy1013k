@@ -8,7 +8,7 @@ IMPORTANT:
 - It is essential to review, understand, and refactor this trigger to ensure maintainability, performance, and prevent any inadvertent issues.
 
 ISSUES:
-Avoid nested for loop - 1 instance
+Avoid nested for loop - 1 instance use maps
 Avoid DML inside for loop - 1 instance
 Bulkify Your Code - 1 instance
 Avoid SOQL Query inside for loop - 2 instances
@@ -19,10 +19,16 @@ https://www.salesforceben.com/12-salesforce-apex-best-practices/
 https://developer.salesforce.com/blogs/developer-relations/2015/01/apex-best-practices-15-apex-commandments
 */
 trigger AnotherOpportunityTrigger on Opportunity (before insert, after insert, before update, after update, before delete, after delete, after undelete) {
-    if (Trigger.isBefore){
+
+   // OpportunityHelper oppHandler = new OpportunityHelper(Trigger.new, Trigger.old, Trigger.newMap, Trigger.oldMap);
+
+    //oppHandler.run();
+}
+/*
+    /*if (Trigger.isBefore){
         if (Trigger.isInsert){
             // Set default Type for new Opportunities
-            Opportunity opp = Trigger.new[0];
+            /*Opportunity opp = Trigger.new[0];
             if (opp.Type == null){
                 opp.Type = 'New Customer';
             }        
@@ -35,11 +41,11 @@ trigger AnotherOpportunityTrigger on Opportunity (before insert, after insert, b
             }
         }
     }
-
-    if (Trigger.isAfter){
-        if (Trigger.isInsert){
+*/
+//    if (Trigger.isAfter){
+//        if (Trigger.isInsert){
             // Create a new Task for newly inserted Opportunities
-            for (Opportunity opp : Trigger.new){
+/*            for (Opportunity opp : Trigger.new){
                 Task tsk = new Task();
                 tsk.Subject = 'Call Primary Contact';
                 tsk.WhatId = opp.Id;
@@ -47,9 +53,9 @@ trigger AnotherOpportunityTrigger on Opportunity (before insert, after insert, b
                 tsk.OwnerId = opp.OwnerId;
                 tsk.ActivityDate = Date.today().addDays(3);
                 insert tsk;
-            }
-        } else if (Trigger.isUpdate){
-            // Append Stage changes in Opportunity Description
+*/            
+//        } else if (Trigger.isUpdate){
+/*            // Append Stage changes in Opportunity Description
             for (Opportunity opp : Trigger.new){
                 for (Opportunity oldOpp : Trigger.old){
                     if (opp.StageName != null){
@@ -74,7 +80,7 @@ trigger AnotherOpportunityTrigger on Opportunity (before insert, after insert, b
     - Sends an email notification to the owner of the Opportunity when it gets deleted.
     - Uses Salesforce's Messaging.SingleEmailMessage to send the email.
     */
-    private static void notifyOwnersOpportunityDeleted(List<Opportunity> opps) {
+ /*   private static void notifyOwnersOpportunityDeleted(List<Opportunity> opps) {
         List<Messaging.SingleEmailMessage> mails = new List<Messaging.SingleEmailMessage>();
         for (Opportunity opp : opps){
             Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
@@ -97,9 +103,10 @@ trigger AnotherOpportunityTrigger on Opportunity (before insert, after insert, b
     - Assigns a primary contact with the title of 'VP Sales' to undeleted Opportunities.
     - Only updates the Opportunities that don't already have a primary contact.
     */
-    private static void assignPrimaryContact(Map<Id,Opportunity> oppNewMap) {        
+/*    private static void assignPrimaryContact(Map<Id,Opportunity> oppNewMap) {        
         Map<Id, Opportunity> oppMap = new Map<Id, Opportunity>();
         for (Opportunity opp : oppNewMap.values()){            
+            //NK - SOQL inside of loop
             Contact primaryContact = [SELECT Id, AccountId FROM Contact WHERE Title = 'VP Sales' AND AccountId = :opp.AccountId LIMIT 1];
             if (opp.Primary_Contact__c == null){
                 Opportunity oppToUpdate = new Opportunity(Id = opp.Id);
@@ -110,3 +117,4 @@ trigger AnotherOpportunityTrigger on Opportunity (before insert, after insert, b
         update oppMap.values();
     }
 }
+*/
